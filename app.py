@@ -24,7 +24,12 @@ if st.button("Analizar Enlace"):
     if url:
         peligro = analizar_enlace(url)
         mensaje = "⚠️ Peligroso" if peligro else "✅ Seguro"
-        st.warning(mensaje) if peligro else st.success(mensaje)
+        
+        # Mostrar alerta correctamente
+        if peligro:
+            st.warning(mensaje)
+        else:
+            st.success(mensaje)
         
         # Guardar en reporte
         nuevo_registro = {
@@ -32,7 +37,7 @@ if st.button("Analizar Enlace"):
             "Alerta": mensaje,
             "Fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
-        st.session_state.reportes = st.session_state.reportes.append(nuevo_registro, ignore_index=True)
+        st.session_state.reportes = pd.concat([st.session_state.reportes, pd.DataFrame([nuevo_registro])], ignore_index=True)
 
 # Mostrar reporte
 st.subheader("📄 Reporte de Enlaces Analizados")
@@ -41,3 +46,4 @@ st.dataframe(st.session_state.reportes)
 # Botón para descargar reporte
 csv = st.session_state.reportes.to_csv(index=False).encode('utf-8')
 st.download_button("Descargar Reporte CSV", data=csv, file_name="reporte_enlaces.csv", mime="text/csv")
+
