@@ -1,4 +1,4 @@
-# archivo: app.py (Versión 3.0: Limpia y de Alto Contraste)
+# archivo: app.py (Versión 4.0: Solución de Contraste y Legibilidad)
 import streamlit as st
 import pandas as pd
 from datetime import datetime
@@ -7,61 +7,64 @@ from datetime import datetime
 st.set_page_config(
     page_title="Detector de Enlaces Seguros",
     page_icon="✅",
-    layout="centered", # Centrado para enfocarse en el contenido principal
+    layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# --- 🎨 ESTILO CSS MEJORADO Y SIMPLIFICADO ---
-# Se eliminaron estilos complejos para centrarse en legibilidad (alto contraste)
+# --- 🎨 ESTILO CSS CORREGIDO Y FINALIZADO ---
 st.markdown("""
 <style>
     /* 1. Fondo simple y limpio */
     .stApp {
         background-color: #ffffff; /* Fondo blanco puro */
+        color: #333333; /* Color de texto base: Gris muy oscuro */
     }
     
     /* 2. Aumentar tamaño de texto general para mejor legibilidad */
-    html, body, .stMarkdown, .stText, .stDataFrame {
+    html, body, .stMarkdown, .stText, .stDataFrame, .stInfo {
         font-size: 1.1em !important; 
+        color: #333333; /* Aseguramos que el texto normal sea oscuro */
     }
     
-    /* 3. Estilo para el Título Principal */
-    .stTitle {
+    /* 3. Estilo para el Título Principal (CORRECCIÓN CLAVE AQUÍ) */
+    h1.st-emotion-cache-18x43rd { /* Selector del título principal */
         font-size: 2.5em !important; 
-        color: #004d99; /* Azul oscuro fuerte para autoridad y confianza */
+        color: #004d99 !important; /* Azul oscuro fuerte y visible */
         text-align: center;
         margin-bottom: 0px;
         padding-top: 10px;
     }
+    
+    /* 4. Estilo para los Subtítulos (CORRECCIÓN CLAVE AQUÍ) */
+    h2, h3 { 
+        font-size: 1.8em !important; 
+        color: #333333 !important; /* Color oscuro para todos los subtítulos */
+    }
 
-    /* 4. Entrada de Texto (URL) */
+    /* 5. Entrada de Texto (URL) */
     .stTextInput>div>div>input {
         font-size: 1.2em !important;
         padding: 15px !important;
-        border: 2px solid #ccc; /* Borde visible */
+        border: 2px solid #ccc; 
         border-radius: 10px;
-        background-color: #f7f7f7; /* Gris claro para destacar el campo */
+        background-color: #f7f7f7; 
+        color: #111111; /* Aseguramos que el texto dentro del input sea muy oscuro */
     }
     
-    /* 5. Estilo del Botón de Análisis */
+    /* 6. Estilo del Botón de Análisis */
     .stButton>button {
-        background-color: #00a651; /* Verde fuerte para acción positiva */
+        background-color: #00a651; 
         color: white;
         border-radius: 10px;
         font-size: 1.3em !important;
         padding: 10px 20px !important;
         font-weight: bold;
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para que destaque */
-        transition: background-color 0.3s;
-    }
-    .stButton>button:hover {
-        background-color: #007f3d; /* Oscurecer al pasar el ratón */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     }
     
-    /* 6. Mejorar la Apariencia de la Tabla (DataFrame) */
-    .stDataFrame {
-        border: 1px solid #ddd;
-        border-radius: 8px;
+    /* 7. Asegurar que las listas (instrucciones) se vean oscuras */
+    li {
+        color: #333333 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -91,13 +94,12 @@ st.markdown(
 st.subheader("🔍 2. Pegue el Enlace Aquí:")
 url = st.text_input("Ejemplo: https://www.banco-urgente.com/login", key="url_input", label_visibility="collapsed")
 
-# Función simple de análisis (la dejaremos igual para el prototipo)
+# Función simple de análisis (la dejamos igual)
 def analizar_enlace(link):
     palabras_sospechosas = ["free", "login", "secure", "banking", "verify", "update", "password", "urgente"]
     alerta = any(palabra in link.lower() for palabra in palabras_sospechosas)
     
-    # Marcamos como peligroso si el enlace es muy corto (acortadores) o tiene palabras clave
-    if len(link) < 25 or any(char.isdigit() for char in link.split('/')[2]): # Revisa números en el dominio
+    if len(link) < 25 or any(char.isdigit() for char in link.split('/')[2]):
          alerta = True 
          
     return alerta
@@ -114,7 +116,6 @@ if st.button("Verificar Enlace Ahora", use_container_width=True):
             
             if peligro:
                 mensaje = "⚠️ ¡MUCHO CUIDADO, ES PELIGROSO! 🛑"
-                # Alerta roja y grande con ícono de peligro
                 st.error(
                     f"## {mensaje}"
                 )
@@ -125,7 +126,6 @@ if st.button("Verificar Enlace Ahora", use_container_width=True):
                 )
             else:
                 mensaje = "✅ ¡ENLACE SEGURO! 👍"
-                # Alerta verde y grande con ícono de seguridad
                 st.success(
                     f"## {mensaje}"
                 )
@@ -155,7 +155,6 @@ if not st.session_state.reportes.empty:
     st.dataframe(
         st.session_state.reportes.sort_values(by="Fecha y Hora", ascending=False), 
         use_container_width=True,
-        # Ocultar el índice por defecto para una tabla más limpia
         hide_index=True
     )
 else:
